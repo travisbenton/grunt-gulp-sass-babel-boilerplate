@@ -18,17 +18,22 @@ function compile(watch) {
 
   function rebundle() {
     bundler.bundle()
-      .on('error', err => { parent.console.error(err); this.emit('end'); })
+      .on('error', err => { 
+        console.error(err); this.emit('end'); 
+      })
       .pipe(source('./js/index.js'))
       .pipe(buffer())
       .pipe(sourcemaps.init({ loadMaps: true }))
       .pipe(sourcemaps.write('./'))
       .pipe(gulp.dest('./build'));
+
+    console.log('-> bundling completed');
+    console.log('-> watching');
   }
 
   if (watch) {
     bundler.on('update', ()=> {
-      parent.console.log('-> bundling...');
+      console.log('-> rebundling...');
       rebundle();
     });
   }
