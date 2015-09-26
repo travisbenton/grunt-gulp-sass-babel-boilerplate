@@ -6,15 +6,20 @@ import buffer from 'vinyl-buffer';
 import browserify from 'browserify';
 import watchify from 'watchify';
 import babel from 'babelify';
+import webserver from 'gulp-webserver';
+
+function compileSass() {
+  gulp.src('./sass/**/*.scss')
+    .pipe(sass().on('error', sass.logError))
+    .pipe(gulp.dest('./build/css'));
+}
 
 function compile(watch) {
   var bundler = watchify(
     browserify('./js/index.js', { debug: true }).transform(babel)
   );
 
-  gulp.src('./sass/**/*.scss')
-    .pipe(sass().on('error', sass.logError))
-    .pipe(gulp.dest('./build/css'));
+  compileSass();
 
   function rebundle() {
     bundler.bundle()
@@ -33,7 +38,7 @@ function compile(watch) {
 
   if (watch) {
     bundler.on('update', ()=> {
-      console.log('-> rebundling...');
+      console.log('-> bundling...');
       rebundle();
     });
   }
@@ -47,5 +52,18 @@ function watch() {
 
 gulp.task('build', ()=> { return compile(); });
 gulp.task('watch', ()=> { return watch(); });
+gulp.task('sass', ()=> { return compileSass(); });
+gulp.task('dev', ()=> {
+  gulp.watch('./sass/**/*.scss', ['sass']);
+  watch();
+
+  gulp.src('./')
+    .pipe(webserver({
+      fallback: 'index.html',
+      livereload: true,
+      directoryListing: false,
+      open: true
+    }));
+});
 
 gulp.task('default', ['watch']);
