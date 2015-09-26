@@ -15,16 +15,21 @@ function compileSass() {
 }
 
 function compile(watch) {
+  
+  // transform js
   var bundler = watchify(
     browserify('./js/index.js', { debug: true }).transform(babel)
   );
-
+  
+  // transform sass
+  gulp.watch('./sass/**/*.scss', ['sass']);
   compileSass();
 
   function rebundle() {
     bundler.bundle()
       .on('error', err => { 
-        console.error(err); this.emit('end'); 
+        console.error(err); 
+        this.emit('end'); 
       })
       .pipe(source('./js/index.js'))
       .pipe(buffer())
@@ -54,9 +59,8 @@ gulp.task('build', ()=> { return compile(); });
 gulp.task('watch', ()=> { return watch(); });
 gulp.task('sass', ()=> { return compileSass(); });
 gulp.task('dev', ()=> {
-  gulp.watch('./sass/**/*.scss', ['sass']);
   watch();
-
+  
   gulp.src('./')
     .pipe(webserver({
       fallback: 'index.html',
@@ -66,4 +70,4 @@ gulp.task('dev', ()=> {
     }));
 });
 
-gulp.task('default', ['watch']);
+gulp.task('default', ['dev']);
