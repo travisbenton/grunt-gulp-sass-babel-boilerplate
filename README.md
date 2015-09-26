@@ -8,10 +8,12 @@ Gulp Babel Sass boilerplate using [this gist](https://gist.github.com/danharper/
 4. Profit. 
 
 #Gulp tasks
+##`gulp`
+Alias for `gulp dev`.
 ##`gulp dev`
 Starts server on `localhost:8000` with livereload enabled. 
 ##`gulp build` 
-Builds CSS and JS files from Sass and Babel counterparts
+Builds CSS and JS files from Sass and Babel counterparts.
 
 #TODO
 1. Write TODO section.
